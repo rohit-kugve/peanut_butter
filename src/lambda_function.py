@@ -116,13 +116,27 @@ def get_train_time(intent, session):
     speech_output = "test speech output"
     reprompt_text = "text output"
     
-    url="https://maps.googleapis.com/maps/api/timezone/json?location=38.908133,-77.047119&timestamp=1458000000&key="
-    apikey = "AIzaSyBLavFNhAVmRiBv_pUsryVItrUxd9RAZQA"
-    url = url + apikey
-    print ('sendig request '+url)
+    #url="https://maps.googleapis.com/maps/api/timezone/json?location=38.908133,-77.047119&timestamp=1458000000&key="
+    #apikey = "AIzaSyBLavFNhAVmRiBv_pUsryVItrUxd9RAZQA"
+    #url = url + apikey
+    #print ('sendig request '+url)
+    #resp = urllib2.urlopen(url)
+    #json_data = json.loads(resp.read())
+    #print(json_data['timeZoneId'])
+    
+    server="https://maps.googleapis.com/maps/api/directions/json?"
+    origin = "origin=Edison+Station,+Edison,+NJ+08817"
+    destination = "destination=Pennsylvania+Station,+New+York,+NY+10119"
+    mode = "mode=transit"
+    apikey = "key=AIzaSyAxD4Vw8jKl_Wn22ZmK_Q4kHZgmE1PmGrU"
+    url = server+origin+"&"+destination+"&"+mode+"&"+apikey
     resp = urllib2.urlopen(url)
     json_data = json.loads(resp.read())
-    print(json_data['timeZoneId'])
+    #print(json_data)
+    dep_time = json_data['routes'][0]['legs'][0]['departure_time']['text']
+    print (dep_time)
+    speech_output = 'next train leaves at '+ dep_time
+    
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
  
