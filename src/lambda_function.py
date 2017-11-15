@@ -12,6 +12,7 @@ import urllib2
 import json
 import xml.etree.ElementTree as etree
 from datetime import datetime as dt
+import time
  
 def lambda_handler(event, context):
     """ Route the incoming request based on type (LaunchRequest, IntentRequest,
@@ -132,10 +133,13 @@ def get_train_time(intent, session):
     url = server+origin+"&"+destination+"&"+mode+"&"+apikey
     resp = urllib2.urlopen(url)
     json_data = json.loads(resp.read())
-    #print(json_data)
     dep_time = json_data['routes'][0]['legs'][0]['departure_time']['text']
     print (dep_time)
-    speech_output = 'next train leaves at '+ dep_time
+    abs_dep_time = json_data['routes'][0]['legs'][0]['departure_time']['value']
+    abs_cur_time = int(time.time())
+    remaining_time = (abs_dep_time - abs_cur_time) / 60
+    speech_output = 'next train to Pen station leaves at '+ dep_time +'. Your have ' \
+                        + str(remaining_time) + ' minutes.'
     
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
