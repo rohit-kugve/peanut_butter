@@ -6,9 +6,10 @@ as testing instructions are located at http://amzn.to/1LzFrj6
 For additional samples, visit the Alexa Skills Kit Getting Started guide at
 http://amzn.to/1LGWsLG
 """
- 
+
 from __future__ import print_function
 import urllib2
+import json
 import xml.etree.ElementTree as etree
 from datetime import datetime as dt
  
@@ -92,7 +93,7 @@ def get_welcome_response():
     """ If we wanted to initialize the session to have some attributes we could
     add those here
     """
- 
+    card_title = intent['name']
     session_attributes = {}
     card_title = "Welcome"
     speech_output = "Welcome to the Alexa Bus Tracker Application. " \
@@ -108,72 +109,20 @@ def get_welcome_response():
  
  
 def get_train_time(intent, session):
-    """ Grabs our bus times and creates a reply for the user
-    """
-    print('inside train time event handler')
     card_title = intent['name']
     session_attributes = {}
+    print('inside train time event handler')
     should_end_session = True
- 
-    #url="http://www.ctabustracker.com/bustime/api/v1/getpredictions?key=YOURAPIKEYGOESHERE&rt=22&stpid=1820"
-    #xml_data = urllib2.urlopen(url)
- 
-    #parse the example into ElementTree
-    #tree = etree.parse(xml_data)
-    #close connection
-    #xml_data.close()
- 
-    #Find the root element
-    #rootElem = tree.getroot()
- 
-    #create lists to hold timesamps and prediction times
-    #timestamps = []
-    #predictiontime = []
-    #prediction = []
- 
-    #iterate over elements in rootElem finding tags with tmstmp and prdtm
-    #for element in rootElem.iter():
-     #   if element.tag == 'tmstmp':
-    #        print element.tag, element.text
-      #      timestamps.append(element.text)
-       # if element.tag == 'prdtm':
-    #        print element.tag, element.text
-        #    predictiontime.append(element.text)
- 
-    #print "Print out list data for tmstmp and prdtm"
-    #print out our values to make sure Tim isn't stupid
-    #for value in timestamps:
-    #    print value
-    #for value in predictiontime:
-    #   print value
- 
-    #describe how the XML time data looks when retrieved from the list
-    #FT = '%Y%m%d %H:%M'
-    #initialize count to check our work
-    #count = 0
-    #for element in rootElem.getchildren():
-     #   delta = dt.strptime(predictiontime[count], FT) - dt.strptime(timestamps[count],FT)
-      #  prediction.append(int(delta.total_seconds()/60))
-      #  count += 1
- 
-    #check your work to make sure that we iterated correctly
-    #for value in prediction:
-    #    print value
-    #print "Count of child xml elements under root (equal to actaul busses):"
-    #print count
- 
-    #if count != 0:
-     #   speech_output = "Your next bus is arriving in " + str(prediction[0]) + " minutes" \
- #
-  #      reprompt_text = ""
-   # else:
-    #    speech_output = "Please ask me for bus times by saying, " \
-     #                   "What are my bus times?"
-      #  reprompt_text = "Please ask me for bus times by saying, " \
-       #                 "What are my bus times?"
-    
     speech_output = "test speech output"
     reprompt_text = "text output"
+    
+    url="https://maps.googleapis.com/maps/api/timezone/json?location=38.908133,-77.047119&timestamp=1458000000&key="
+    apikey = "AIzaSyBLavFNhAVmRiBv_pUsryVItrUxd9RAZQA"
+    url = url + apikey
+    print ('sendig request '+url)
+    resp = urllib2.urlopen(url)
+    json_data = json.loads(resp.read())
+    print(json_data['timeZoneId'])
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
  
